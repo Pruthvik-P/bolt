@@ -1,17 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bolt ⚡
+
+Welcome to Bolt! This project is a Next.js application designed for running tasks, including AI jobs, within secure sandboxed environments using technologies like Inngest and E2B.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+- Node.js (v18 or later recommended)
+- A package manager: npm, yarn, pnpm, or bun
+- Access to a database (e.g., PostgreSQL, MySQL)
 
 ## Getting Started
 
-First, run the development server:
+Follow these steps to get your development environment set up and running.
+
+### 1. Clone the Repository
 
 ```bash
-npm run dev
+git clone https://github.com/Pruthvik-P/bolt.git
+cd bolt
+```
+
+### 2. Install Dependencies
+
+Choose the command that corresponds to your package manager:
+
+```bash
+npm install
 # or
-yarn dev
+yarn install
 # or
-pnpm dev
+pnpm install
 # or
-bun dev
+bun install
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
