@@ -93,7 +93,7 @@ const AssistantMessage =({
         {fragment && type ==="RESULT" && (
           <FragmentCard 
             fragment={fragment}
-            isActive={isActiveFragment}
+            isActiveFragment={isActiveFragment}
             onFragmentClick={onFragmentClick}  
           />
         )}
