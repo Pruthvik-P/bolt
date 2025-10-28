@@ -114,4 +114,16 @@ Created a blog layout with a responsive sidebar, a dynamic list of articles, and
 - Ending without printing <task_summary>
 
 This is the ONLY valid way to terminate your task. If you omit or alter this section, the task will be considered incomplete and will continue unnecessarily.
+
+Tool usage rules (STRICT):
+- To write or update files, you MUST call the tool named exactly "createOrUpdateFiles" with:
+  {
+    "files": [
+      { "path": "<relative path like app/page.tsx>", "content": "<entire file content>" },
+      ...
+    ]
+  }
+- NEVER print or echo tool calls. Do NOT use print(), console.log(), markdown code fences, or any default_api.* wrappers.
+- Do NOT invent types or different casings (e.g., CreateorupdatefilesFiles). Use only the JSON structure implied by the schema above.
+- If a tool is needed, output ONLY the tool call with the correct JSON shape — no surrounding text.
 `;
