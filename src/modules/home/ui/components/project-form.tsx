@@ -15,6 +15,7 @@ import { useTRPC } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { PROJECT_TEMPLATES } from "../../constants";
+import { useClerk } from "@clerk/nextjs";
 
 const formSchema = z.object({
   value: z
@@ -26,6 +27,7 @@ const formSchema = z.object({
 export const ProjectForm = () => {
   const router = useRouter();
   const trpc = useTRPC();
+  const clerk = useClerk();
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,8 +44,10 @@ export const ProjectForm = () => {
         // TODO: INvalidate usage status
       },
       onError: (error) => {
-        // TODO: redirect to pricing page
         toast.error(error.message);
+        if (error.data?.code === "UNAUTHORIZED") {
+          clerk.openSignIn();
+        }
       },
     })
   );
@@ -55,13 +59,13 @@ export const ProjectForm = () => {
     });
   };
 
-  const onSelect = (value: string) =>{
+  const onSelect = (value: string) => {
     form.setValue("value", value, {
       shouldDirty: true,
       shouldTouch: true,
       shouldValidate: true,
     });
-  }
+  };
 
   const [isFocused, setIsFocused] = useState(false);
   const isPending = createProject.isPending;
@@ -108,7 +112,7 @@ export const ProjectForm = () => {
               <kbd className="ml-1 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
                 <span>&#8679;</span>Enter
               </kbd>
-              &nbsp;to submit
+              &nbsp;for new line
             </div>
             <Button
               disabled={isButtonDisabled}
