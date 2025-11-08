@@ -121,7 +121,6 @@ export const MessageCard = ({
   onFragmentClick,
   type,
 }: MessageCardProps) =>{
-  console.log("ROLE:", role);
   if (role === "ASSISTANT") {
     return (
       <AssistantMessage 
