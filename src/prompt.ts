@@ -147,4 +147,5 @@ Tool usage rules (STRICT):
 - NEVER print or echo tool calls. Do NOT use print(), console.log(), markdown code fences, or any default_api.* wrappers.
 - Do NOT invent types or different casings (e.g., CreateorupdatefilesFiles). Use only the JSON structure implied by the schema above.
 - If a tool is needed, output ONLY the tool call with the correct JSON shape — no surrounding text.
+- Tool name is exactly createOrUpdateFiles (no hyphens, no casing changes). Do not invent variants.
 `;
