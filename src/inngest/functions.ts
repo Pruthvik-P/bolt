@@ -14,6 +14,7 @@ import { getSandbox, lastAssistantTextMessageContent, parseAgentOutput } from ".
 import { z } from "zod";
 import { FRAGMENT_TITLE_PROMPT, PROMPT, RESPONSE_PROMPT } from "@/prompt";
 import prisma from "@/lib/db";
+import { SANDBOX_TIMEOUT } from "./types";
 
 interface AgentState {
   summary: string;
@@ -26,6 +27,7 @@ export const codeAgentFunction = inngest.createFunction(
   async ({ event, step }) => {
     const sandboxId = await step.run("get-sandbox-id", async () => {
       const sandbox = await Sandbox.create("bolt-nextjs-test-2");
+      await sandbox.setTimeout(SANDBOX_TIMEOUT); // 15 minutes
       return sandbox.sandboxId;
     });
 
@@ -39,8 +41,9 @@ export const codeAgentFunction = inngest.createFunction(
             projectId: event.data.projectId,
           },
           orderBy: {
-            createdAt: "desc", // TODO: Change to asc if Ai does'nt understand
+            createdAt: "desc",
           },
+          take: 5,
         });
 
         for (const message of messages) {
@@ -50,7 +53,7 @@ export const codeAgentFunction = inngest.createFunction(
             content: message.content,
           });
         }
-        return formatedMessages;
+        return formatedMessages.reverse();
       }
     );
 
@@ -145,6 +148,43 @@ export const codeAgentFunction = inngest.createFunction(
             }
           },
         }),
+        // Alias: tolerate occasional hyphenated tool name emitted by the model
+        createTool({
+          name: "createOr-UpdateFiles",
+          description: "Alias of createOrUpdateFiles; forwards to the same implementation",
+          parameters: z.object({
+            files: z.array(
+              z.object({
+                path: z.string(),
+                content: z.string(),
+              })
+            ),
+          }),
+          handler: async (
+            { files },
+            { step, network }: Tool.Options<AgentState>
+          ) => {
+            const forwarded = await step?.run(
+              "createOrUpdateFiles-alias",
+              async () => {
+                try {
+                  const updatedFiles = network.state.data.files || {};
+                  const sandbox = await getSandbox(sandboxId);
+                  for (const file of files) {
+                    await sandbox.files.write(file.path, file.content);
+                    updatedFiles[file.path] = file.content;
+                  }
+                  return updatedFiles;
+                } catch (error) {
+                  return "Error: " + error;
+                }
+              }
+            );
+            if (typeof forwarded == "object") {
+              network.state.data.files = forwarded;
+            }
+          },
+        }),
         createTool({
           name: "readFiles",
           description: "Read files from the sandbox",
@@ -205,7 +245,7 @@ export const codeAgentFunction = inngest.createFunction(
       description: "a fragment title generator",
       system: FRAGMENT_TITLE_PROMPT,
       model: gemini({
-        model: "gemini-1.0-pro",
+        model: "gemini-2.5-pro",
         defaultParameters: {
           generationConfig: {
             temperature: 0.1,
@@ -219,7 +259,7 @@ export const codeAgentFunction = inngest.createFunction(
       description: "a response generator",
       system: RESPONSE_PROMPT,
       model: gemini({
-        model: "gemini-1.0-pro",
+        model: "gemini-2.5-pro",
         defaultParameters: {
           generationConfig: {
             temperature: 0.1,
