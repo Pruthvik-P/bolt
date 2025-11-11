@@ -3,10 +3,8 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
-  CheveronDownIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
-  EditIcon,
   SunMoonIcon,
 } from "lucide-react";
 
@@ -17,13 +15,10 @@ import {
   DropdownMenuPortal,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
   DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
