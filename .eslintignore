@@ -1,0 +1,7 @@
+# Ignore build output and dependencies
+.next/
+node_modules/
+
+# Ignore generated code (do not lint)
+src/generated/
+prisma/migrations/
